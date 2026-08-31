@@ -13,7 +13,6 @@
 
 extern char **environ;
 
-/* Function prototypes */
 char *read_line(void);
 char **split_line(char *line);
 int execute_cmd(char **args, char *prog_name, int count);

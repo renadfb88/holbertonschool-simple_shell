@@ -3,70 +3,52 @@
 /**
  * read_line - Reads a line of input from standard input
  *
- * Return: Pointer to the read line, or NULL on EOF/error
+ * Return: Pointer to the line buffer, or NULL on EOF/error
  */
 char *read_line(void)
 {
 	char *line = NULL;
 	size_t bufsize = 0;
-	ssize_t nread;
+	ssize_t characters;
 
-	nread = getline(&line, &bufsize, stdin);
-	if (nread == -1)
+	characters = getline(&line, &bufsize, stdin);
+	if (characters == -1)
 	{
 		free(line);
 		return (NULL);
 	}
-
 	return (line);
 }
 
 /**
  * split_line - Splits a line into tokens (arguments)
- * @line: The input string to split
+ * @line: The input string to parse
  *
- * Return: Null-terminated array of tokens, or NULL on failure
+ * Return: Null-terminated array of token strings, or NULL on error
  */
 char **split_line(char *line)
 {
-	int bufsize = 64, i = 0;
-	char **tokens = malloc(bufsize * sizeof(char *));
+	int bufsize = 64, position = 0;
+	char **tokens;
 	char *token;
 
+	tokens = malloc(bufsize * sizeof(char *));
 	if (!tokens)
-	{
-		perror("Allocation error");
 		return (NULL);
-	}
 
 	token = strtok(line, DELIM);
 	while (token != NULL)
 	{
-		tokens[i] = token;
-		i++;
-
-		if (i >= bufsize)
+		tokens[position++] = token;
+		if (position >= bufsize)
 		{
 			bufsize += 64;
 			tokens = realloc(tokens, bufsize * sizeof(char *));
 			if (!tokens)
-			{
-				perror("Allocation error");
 				return (NULL);
-			}
 		}
 		token = strtok(NULL, DELIM);
 	}
-	tokens[i] = NULL;
+	tokens[position] = NULL;
 	return (tokens);
-}
-
-/**
- * free_args - Frees the memory allocated for arguments array
- * @args: Array of strings
- */
-void free_args(char **args)
-{
-	if (args)
-		free(args);
 }

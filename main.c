@@ -1,11 +1,12 @@
 #include "shell.h"
 
 /**
- * execute_cmd - Forks and executes a command with arguments
+ * execute_cmd - Forks a child process and executes a command with arguments
  * @args: Null-terminated array of arguments
- * @prog_name: Name of the shell executable (for errors)
+ * @prog_name: Name of the shell executable
+ * @count: Execution count for error messages
  *
- * Return: 0 on success, or 1 on error
+ * Return: Status code of executed command
  */
 int execute_cmd(char **args, char *prog_name, int count)
 {
@@ -15,8 +16,7 @@ int execute_cmd(char **args, char *prog_name, int count)
 
 	if (args[0] == NULL)
 		return (0);
-	
-/* Find path */
+
 	cmd_path = find_path(args[0]);
 	if (cmd_path == NULL)
 	{
@@ -34,44 +34,43 @@ int execute_cmd(char **args, char *prog_name, int count)
 	}
 	else if (pid < 0)
 	{
-		perror(prog_name); free(cmd_path);
+		perror(prog_name);
+		free(cmd_path);
 	}
 	else
 	{
-		wait(&status); 
+		wait(&status);
 		free(cmd_path);
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 	}
-
-	return (0);
+	return (1);
 }
 
 /**
- * main - Entry point for the simple UNIX command interpreter
- * @argc: Argument count
- * @argv: Argument vector
+ * main - Entry point for the simple shell
+ * @ac: Argument count
+ * @av: Argument vector
  *
- * Return: Always 0
+ * Return: Exit status of the last executed command
  */
-int main(int argc, char **argv)
+int main(int ac, char **av)
 {
 	char *line;
 	char **args;
-	int interactive, count = 0, last = 0;
-	(void)argc;
+	int count = 0, last = 0;
 
-	interactive = isatty(STDIN_FILENO);
+	(void)ac;
 
 	while (1)
 	{
-		if (interactive)
-			write(STDOUT_FILENO, "($) ", 4);
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "#cisfun$ ", 9);
 
 		line = read_line();
-		if (line == NULL)
+		if (!line)
 		{
-			if (interactive)
+			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
@@ -79,9 +78,9 @@ int main(int argc, char **argv)
 
 		args = split_line(line);
 		if (args && args[0] && handle_builtin(args, line, last) == 0)
-			last = execute_cmd(args, argv[0], count);
+			last = execute_cmd(args, av[0], count);
 
-		free_args(args);
+		free(args);
 		free(line);
 	}
 
