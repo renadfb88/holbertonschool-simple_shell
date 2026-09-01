@@ -2,8 +2,12 @@
 
 A simple UNIX command line interpreter implemented in C as part of the Holberton School curriculum.
 
+---
+
 ## Description
 `hsh` is a minimalistic shell that mimics the basic behavior of `/bin/sh`. It can execute external system commands by locating them via the `PATH` environment variable or direct paths, handles interactive and non-interactive execution modes, and manages process execution using system calls like `fork`, `execve`, and `wait`.
+
+---
 
 ## Features
 - Interactive and Non-interactive modes
@@ -12,7 +16,28 @@ A simple UNIX command line interpreter implemented in C as part of the Holberton
 - Handling `EOF` (Ctrl+D)
 - Built-in commands: `exit`, `env`
 
+---
+
+## How it works
+
+Every time you type a line, the shell does five things:
+
+1. **Prompt** - print `#cisfun$ ` and wait for you.
+2. **Read** - read the whole line you typed.
+3. **Split** - cut the line into words, so `ls -l` becomes `ls` and `-l`.
+4. **Find** - turn the word `ls` into a real program, `/bin/ls`, by searching
+   the directories listed in your `PATH`.
+5. **Run** - make a copy of itself (`fork`), turn the copy into that program
+   (`execve`), and wait for it to finish (`wait`).
+
+Then it starts again from step 1.
+
+---
+
 ## Compilation
 Compile all `.c` files using `gcc`:
 ```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+
+---
+
