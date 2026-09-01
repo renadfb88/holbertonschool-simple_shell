@@ -114,4 +114,4 @@ man ./man_1_simple_shell
 ## Authors
 
 - Arwa Ahmed Alhamrani
-- Renad Fouad Albatat
+- Renad Fouad Albatati
