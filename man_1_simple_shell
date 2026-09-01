@@ -1,34 +1,129 @@
-.TH HSH 1 "August 2026" "0.1" "Simple Shell Manual"
+.TH HSH 1 "September 2026" "1.0" "Simple Shell Manual"
 .SH NAME
-hsh \- Simple UNIX command interpreter
+hsh \- simple UNIX command interpreter
 .SH SYNOPSIS
 .B ./hsh
 .SH DESCRIPTION
 .B hsh
-is a simple UNIX command language interpreter that reads commands from either standard input or from a file and executes them.
+is a simple UNIX command language interpreter that reads commands from
+standard input, from a pipe, or from a file, and executes them.
 .PP
-The shell can be used interactively and non-interactively. In interactive mode, it displays a prompt \fB($)\fR and waits for the user to input commands. In non-interactive mode, it reads commands from pipes or files without printing a prompt.
-
+For every line read,
+.B hsh
+splits the line into a command and its arguments, locates the program,
+creates a child process with
+.BR fork (2),
+replaces that child with the requested program using
+.BR execve (2),
+and waits for it to terminate before displaying the prompt again.
+.PP
+If the command name contains a
+.B /
+it is used as a path directly. Otherwise
+.B hsh
+searches each directory listed in the
+.B PATH
+environment variable, in order, and runs the first executable match.
+If no match is found, no child process is created.
+.PP
+The command lines are simple: no semicolons, no pipes, no redirections,
+no quoting, no globbing and no variable expansion.
 .SH INVOCATION
-To run \fBhsh\fR interactively:
+.B hsh
+runs in two modes.
+.TP
+.B Interactive
+When standard input is a terminal,
+.B hsh
+displays the prompt
+.B "#cisfun$ "
+and waits for the user to type a command. The prompt is displayed again
+after each command completes.
 .IP
 .B ./hsh
-
-To run \fBhsh\fR non-interactively:
+.TP
+.B Non\-interactive
+When standard input is a pipe or a file, no prompt is printed. Each line
+is read and executed until end\-of\-file is reached.
 .IP
 .B echo "/bin/ls" | ./hsh
-
+.IP
+.B cat commands.txt | ./hsh
 .SH BUILTINS
-The shell supports the following built-in commands:
+The following commands are handled by the shell itself, without creating
+a new process.
 .TP
 .B exit
-Exits the shell.
+Exits the shell, returning the exit status of the last command executed.
+Arguments to
+.B exit
+are ignored.
 .TP
 .B env
-Prints the current environment variables.
-
-.SH RETURN VALUE
-Upon successful execution of a command, \fBhsh\fR returns the exit status of the last command executed. If an error occurs, an error message is printed to standard error and a non-zero exit status is returned.
-
+Prints the current environment, one
+.I NAME=value
+pair per line.
+.SH "END OF FILE"
+Typing
+.B Ctrl+D
+on an empty line, or reaching the end of the input stream, terminates the
+shell. In interactive mode a newline is printed before exiting.
+.SH ENVIRONMENT
+.TP
+.B PATH
+A colon\-separated list of directories searched for executable programs.
+If
+.B PATH
+is unset or empty, only commands given with an explicit path can be run.
+.SH "EXIT STATUS"
+.B hsh
+returns the exit status of the last command executed.
+.TP
+.B 0
+Success.
+.TP
+.B 127
+The command could not be found.
+.SH EXAMPLES
+Run a command with arguments:
+.IP
+.nf
+#cisfun$ ls -l /tmp
+.fi
+.PP
+Print the environment:
+.IP
+.nf
+#cisfun$ env
+.fi
+.PP
+A command that does not exist:
+.IP
+.nf
+$ echo "qwerty" | ./hsh
+\&./hsh: 1: qwerty: not found
+.fi
+.PP
+The name printed in the error message is always
+.BR argv[0] ,
+so invoking the shell by another path changes it:
+.IP
+.nf
+$ echo "qwerty" | ./././hsh
+\&./././hsh: 1: qwerty: not found
+.fi
+.SH BUGS
+No known bugs. Advanced shell features such as pipes, redirections,
+command separators, quoting, aliases and job control are intentionally
+not implemented.
+.SH "SEE ALSO"
+.BR sh (1),
+.BR execve (2),
+.BR fork (2),
+.BR wait (2),
+.BR getline (3)
 .SH AUTHORS
-Written by Arwa Al-Humrani & Partner.
+Arwa Ahmed Alhamrani
+.br
+Renad Fouad Albatati
+
