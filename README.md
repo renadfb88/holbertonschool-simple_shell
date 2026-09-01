@@ -77,4 +77,15 @@ Two commands are handled by the shell itself, without starting a new program:
 
 ```
 
+## When a command does not exist
+
+`hsh` prints the same error `/bin/sh` does, and keeps going:
+
+```
+$ echo "qwerty" | ./hsh
+./hsh: 1: qwerty: not found
+```
+
+The `1` is the line number, and the name at the front is however you started
+the shell.
 
