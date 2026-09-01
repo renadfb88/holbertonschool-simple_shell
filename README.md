@@ -89,3 +89,15 @@ $ echo "qwerty" | ./hsh
 The `1` is the line number, and the name at the front is however you started
 the shell.
 
+---
+
+## The files
+
+| File | What is inside |
+| --- | --- |
+| `shell.h` | The header: includes and all the function prototypes. |
+| `main.c` | `main()` (the loop) and `execute_cmd()` (fork, exec, wait). |
+| `parser.c` | Reading a line and splitting it into words. |
+| `path.c` | Searching `PATH` to find the program. |
+| `builtins.c` | The `exit` and `env` commands. |
+
