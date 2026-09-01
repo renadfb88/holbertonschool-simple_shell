@@ -28,10 +28,12 @@ char *read_line(void)
  */
 char **split_line(char *line)
 {
-	int bufsize = 64, position = 0;
+	size_t bufsize;
+	int position = 0;
 	char **tokens;
 	char *token;
 
+	bufsize = (strlen(line) / 2) + 2;
 	tokens = malloc(bufsize * sizeof(char *));
 	if (!tokens)
 		return (NULL);
@@ -40,15 +42,21 @@ char **split_line(char *line)
 	while (token != NULL)
 	{
 		tokens[position++] = token;
-		if (position >= bufsize)
-		{
-			bufsize += 64;
-			tokens = realloc(tokens, bufsize * sizeof(char *));
-			if (!tokens)
-				return (NULL);
-		}
 		token = strtok(NULL, DELIM);
 	}
 	tokens[position] = NULL;
 	return (tokens);
+}
+
+/**
+ * free_args - Frees the memory allocated for the arguments array
+ * @args: Array of token pointers returned by split_line
+ *
+ * Description: The tokens point inside the buffer returned by read_line,
+ * so only the array of pointers itself is freed here.
+ */
+void free_args(char **args)
+{
+	if (args)
+		free(args);
 }

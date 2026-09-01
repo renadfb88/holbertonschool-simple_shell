@@ -4,6 +4,7 @@
  * handle_builtin - Runs a built-in if args[0] is one
  * @args: Null-terminated array of arguments
  * @line: Buffer from read_line, freed before exiting
+ * @last: Status of the last command, used as the exit status
  *
  * Return: 1 if a built-in was handled, 0 otherwise
  */
