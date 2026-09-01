@@ -101,3 +101,10 @@ the shell.
 | `path.c` | Searching `PATH` to find the program. |
 | `builtins.c` | The `exit` and `env` commands. |
 
+---
+
+## Manual page
+
+```bash
+man ./man_1_simple_shell
+```
