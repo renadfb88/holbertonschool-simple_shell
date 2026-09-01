@@ -66,4 +66,15 @@ AUTHORS  README.md  hsh  main.c  parser.c  path.c  shell.h
 
 ---
 
+## Built-in commands
+
+Two commands are handled by the shell itself, without starting a new program:
+
+| Command | What it does |
+| --- | --- |
+| `exit` | Leaves the shell. |
+| `env` | Prints your environment, one `NAME=value` per line. 
+
+```
+
 
