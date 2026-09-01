@@ -41,3 +41,29 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 
 ---
 
+## Running it
+
+You can type commands yourself:
+
+```
+$ ./hsh
+#cisfun$ ls
+AUTHORS  README.md  hsh  main.c  parser.c  path.c  shell.h
+#cisfun$ ls -l /tmp
+#cisfun$ exit
+$
+```
+
+Press `Ctrl+D` at any time to leave the shell.
+
+Or you can feed it commands from somewhere else. When the input is not a
+keyboard, no prompt is printed:
+
+```
+$ echo "/bin/ls" | ./hsh
+AUTHORS  README.md  hsh  main.c  parser.c  path.c  shell.h
+```
+
+---
+
+
